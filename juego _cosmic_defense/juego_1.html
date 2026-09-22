@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title> Cosmic Defender</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a1a;
+            font-family: 'Orbitron', monospace;
+            color: #fff;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, #0a0a2e 0%, #1a0a3e 50%, #0a0a2e 100%);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* HUD */
+        .hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+        }
+
+        .hud-item {
+            font-size: clamp(0.65rem, 2.5vw, 0.9rem);
+            color: #00d4ff;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .hud-item span {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .health-bar {
+            position: absolute;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(200px, 50vw);
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ffaa00, #00ff88);
+            transition: width 0.3s;
+            border-radius: 4px;
+        }
+
+        /* CONTROLES TÁCTILES */
+        .touch-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 130px;
+            z-index: 10;
+            display: none;
+            pointer-events: none;
+        }
+
+        .touch-controls.active {
+            display: block;
+        }
+
+        /* Joystick */
+        .joystick-zone {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            width: 110px;
+            height: 110px;
+            pointer-events: auto;
+        }
+
+        .joystick-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .joystick-knob {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            background: radial-gradient(circle, #00d4ff 0%, #0088aa 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s;
+        }
+
+        .joystick-knob.active {
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.9);
+        }
+
+        /* Botón de disparo */
+        .fire-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #ff4444;
+            background: radial-gradient(circle, rgba(255, 68, 68, 0.3) 0%, rgba(255, 68, 68, 0.1) 100%);
+            color: #ff4444;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+            transition: all 0.1s;
+        }
+
+        .fire-btn:active,
+        .fire-btn.pressed {
+            background: radial-gradient(circle, rgba(255, 68, 68, 0.6) 0%, rgba(255, 68, 68, 0.2) 100%);
+            box-shadow: 0 0 30px rgba(255, 68, 68, 0.6);
+            transform: scale(0.95);
+        }
+
+        .fire-btn::after {
+            content: '';
+            font-size: 1.8rem;
+        }
+
+        /* Botón de pausa táctil */
+        .pause-btn-touch {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 1.2rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .pause-btn-touch.active {
+            display: flex;
+        }
+
+        /* OVERLAYS */
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            transition: opacity 0.5s;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+
+        .ui-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .title {
+            font-size: clamp(1.8rem, 7vw, 3.5rem);
+            font-weight: 900;
+            color: #00d4ff;
+            text-shadow: 0 0 20px #00d4ff, 0 0 40px #00d4ff;
+            margin-bottom: 8px;
+            animation: pulse 2s infinite;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: clamp(0.7rem, 2.5vw, 1rem);
+            color: #ff6b9d;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px #ff6b9d;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 14px 45px;
+            margin: 8px;
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(0.85rem, 3vw, 1.1rem);
+            font-weight: 700;
+            border: 2px solid #00d4ff;
+            background: transparent;
+            color: #00d4ff;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .btn:hover,
+        .btn:active {
+            background: #00d4ff;
+            color: #0a0a1a;
+            box-shadow: 0 0 30px #00d4ff;
+            transform: scale(1.05);
+        }
+
+        .btn-back {
+            border-color: #ff6b9d;
+            color: #ff6b9d;
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+            padding: 10px 30px;
+            min-width: auto;
+        }
+
+        .btn-back:hover,
+        .btn-back:active {
+            background: #ff6b9d;
+            box-shadow: 0 0 20px #ff6b9d;
+        }
+
+        .btn-pause {
+            border-color: #ffaa00;
+            color: #ffaa00;
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+            padding: 10px 30px;
+            min-width: auto;
+        }
+
+        .btn-pause:hover,
+        .btn-pause:active {
+            background: #ffaa00;
+            box-shadow: 0 0 20px #ffaa00;
+        }
+
+        .final-score {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+            margin: 12px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0 25px;
+            width: min(300px, 80vw);
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: #888;
+            letter-spacing: 2px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            color: #00ff88;
+            margin-top: 4px;
+            font-weight: 700;
+        }
+
+        .level-up {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: #ffd700;
+            text-shadow: 0 0 30px #ffd700;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 8;
+            white-space: nowrap;
+        }
+
+        .level-up.show {
+            animation: levelUpAnim 1.5s ease-out;
+        }
+
+        /* Orientación landscape en móvil */
+        .orientation-hint {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a1a;
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .orientation-hint .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: rotatePhone 2s ease-in-out infinite;
+        }
+
+        @media screen and (max-width: 600px) and (orientation: portrait) {
+            .orientation-hint {
+                display: flex;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes levelUpAnim {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes rotatePhone {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Desktop: ocultar controles táctiles */
+        @media (hover: hover) and (pointer: fine) {
+            .touch-controls {
+                display: none !important;
+            }
+
+            .pause-btn-touch {
+                display: none !important;
+            }
+
+            .health-bar {
+                bottom: 20px;
+            }
+        }
+
+        /* Móvil: mostrar controles táctiles */
+        @media (hover: none) and (pointer: coarse) {
+            .touch-controls.active {
+                display: block;
+            }
+
+            .pause-btn-touch.active {
+                display: flex;
+            }
+        }
+
+        /* Indicador de controles */
+        .controls-hint-desktop {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Orientación hint -->
+        <div class="orientation-hint" id="orientationHint">
+            <div class="icon"></div>
+            <div class="title" style="font-size:1.5rem;margin-bottom:10px;">Gira tu celular</div>
+            <div class="subtitle">Para una mejor experiencia, usa modo horizontal</div>
+        </div>
+
+        <!-- HUD -->
+        <div class="hud" id="hud" style="display:none;">
+            <div class="hud-item"> <span id="scoreDisplay">0</span></div>
+            <div class="hud-item">NIVEL <span id="levelDisplay">1</span></div>
+            <div class="hud-item"> <span id="highScoreDisplay">0</span></div>
+        </div>
+
+        <div class="health-bar" id="healthBar" style="display:none;">
+            <div class="health-fill" id="healthFill" style="width: 100%;"></div>
+        </div>
+
+        <div class="controls-hint-desktop" id="controlsHint">
+            WASD / FLECHAS para mover • ESPACIO para disparar • P para pausar
+        </div>
+
+        <div class="level-up" id="levelUpText">¡NIVEL SUPERADO!</div>
+
+        <!-- Botón pausa táctil -->
+        <div class="pause-btn-touch" id="pauseBtnTouch" onclick="togglePause()">⏸</div>
+
+        <!-- Controles táctiles -->
+        <div class="touch-controls" id="touchControls">
+            <div class="joystick-zone" id="joystickZone">
+                <div class="joystick-base"></div>
+                <div class="joystick-knob" id="joystickKnob"></div>
+            </div>
+            <div class="fire-btn" id="fireBtn"></div>
+        </div>
+
+        <!-- Pantalla de inicio -->
+        <div class="ui-overlay" id="startScreen">
+            <div class="title"> COSMIC<br>DEFENDER</div>
+            <div class="subtitle">Defiende la galaxia</div>
+            <button class="btn" onclick="startGame()">JUGAR</button>
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-pause" onclick="togglePause()">PAUSA</button>
+                <button class="btn btn-back" onclick="goBack()">← VOLVER</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de pausa -->
+        <div class="ui-overlay hidden" id="pauseScreen">
+            <div class="title" style="font-size:2rem;">PAUSA</div>
+            <button class="btn" onclick="resumeGame()">CONTINUAR</button>
+            <button class="btn btn-back" onclick="goToMenu()">MENÚ</button>
+        </div>
+
+        <!-- Pantalla de Game Over -->
+        <div class="ui-overlay hidden" id="gameOverScreen">
+            <div class="title" style="color:#ff4444;text-shadow:0 0 20px #ff4444;">GAME OVER</div>
+            <div class="final-score"><span id="finalScore">0</span></div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">NIVEL</div>
+                    <div class="stat-value" id="finalLevel">1</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">MEJOR</div>
+                    <div class="stat-value" id="finalHighScore">0</div>
+                </div>
+            </div>
+            <button class="btn" onclick="startGame()">REINTENTAR</button>
+            <button class="btn btn-back" onclick="goBack()">← VOLVER</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Detección de dispositivo
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        // Ajustar tamaño del canvas
+        function resizeCanvas() {
+            const container = document.getElementById('gameContainer');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Estado del juego
+        let gameState = 'menu'; // menu, playing, paused, gameover
+        let score = 0;
+        let level = 1;
+        let highScore = parseInt(localStorage.getItem('cosmicHighScore')) || 0;
+        let health = 100;
+        let frameCount = 0;
+
+        // Jugador
+        const player = {
+            x: 0, y: 0,
+            width: 40, height: 50,
+            speed: 5,
+            dx: 0, dy: 0,
+            cooldown: 0,
+            invulnerable: 0
+        };
+
+        // Entidades
+        let bullets = [];
+        let enemies = [];
+        let particles = [];
+        let stars = [];
+
+        // Controles táctiles
+        let touchInput = { x: 0, y: 0, active: false };
+        let fireActive = false;
+
+        // Joystick
+        const joystickZone = document.getElementById('joystickZone');
+        const joystickKnob = document.getElementById('joystickKnob');
+        let joystickCenter = { x: 0, y: 0 };
+        let joystickMaxRadius = 35;
+
+        function initJoystick() {
+            const rect = joystickZone.getBoundingClientRect();
+            joystickCenter = {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+        }
+
+        // Eventos táctiles del joystick
+        joystickZone.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleJoystick(e.touches[0]);
+        }, { passive: false });
+
+        joystickZone.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            handleJoystick(e.touches[0]);
+        }, { passive: false });
+
+        joystickZone.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            touchInput = { x: 0, y: 0, active: false };
+            joystickKnob.style.transform = 'translate(-50%, -50%)';
+            joystickKnob.classList.remove('active');
+        }, { passive: false });
+
+        function handleJoystick(touch) {
+            const dx = touch.clientX - joystickCenter.x;
+            const dy = touch.clientY - joystickCenter.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = joystickMaxRadius;
+
+            let moveX = dx;
+            let moveY = dy;
+
+            if (distance > maxDist) {
+                moveX = (dx / distance) * maxDist;
+                moveY = (dy / distance) * maxDist;
+            }
+
+            joystickKnob.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+            joystickKnob.classList.add('active');
+
+            // Normalizar input (-1 a 1)
+            touchInput = {
+                x: Math.max(-1, Math.min(1, dx / maxDist)),
+                y: Math.max(-1, Math.min(1, dy / maxDist)),
+                active: true
+            };
+        }
+
+        // Botón de disparo táctil
+        const fireBtn = document.getElementById('fireBtn');
+
+        fireBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            fireActive = true;
+            fireBtn.classList.add('pressed');
+        }, { passive: false });
+
+        fireBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            fireActive = false;
+            fireBtn.classList.remove('pressed');
+        }, { passive: false });
+
+        fireBtn.addEventListener('touchcancel', (e) => {
+            fireActive = false;
+            fireBtn.classList.remove('pressed');
+        });
+
+        // Controles de teclado
+        const keys = {};
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+            }
+            if (e.key.toLowerCase() === 'p' && gameState === 'playing') {
+                togglePause();
+            }
+        });
+        document.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
+
+        // Audio sintetizado
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            switch (type) {
+                case 'shoot':
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.1);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                    break;
+                case 'explosion':
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                    break;
+                case 'hit':
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                    break;
+                case 'levelUp':
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554, now + 0.1);
+                    osc.frequency.setValueAtTime(659, now + 0.2);
+                    osc.frequency.setValueAtTime(880, now + 0.3);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                    break;
+            }
+        }
+
+        // Inicializar estrellas
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 80; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 0.5,
+                    speed: Math.random() * 1.5 + 0.3,
+                    brightness: Math.random()
+                });
+            }
+        }
+
+        // Partículas
+        function createExplosion(x, y, color, count = 15) {
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+                const speed = Math.random() * 4 + 1;
+                particles.push({
+                    x, y,
+                    dx: Math.cos(angle) * speed,
+                    dy: Math.sin(angle) * speed,
+                    life: 1,
+                    decay: Math.random() * 0.03 + 0.015,
+                    color,
+                    size: Math.random() * 4 + 2
+                });
+            }
+        }
+
+        // Enemigos
+        function spawnEnemy() {
+            const size = Math.random() * 20 + 15;
+            const side = Math.floor(Math.random() * 3);
+
+            let x, y, dx, dy;
+            const speed = 1 + level * 0.25 + Math.random() * 0.5;
+
+            if (side === 0) {
+                x = Math.random() * canvas.width;
+                y = -size;
+                dx = (Math.random() - 0.5) * 2;
+                dy = speed;
+            } else if (side === 1) {
+                x = -size;
+                y = Math.random() * canvas.height * 0.5;
+                dx = speed;
+                dy = Math.random() * 1;
+            } else {
+                x = canvas.width + size;
+                y = Math.random() * canvas.height * 0.5;
+                dx = -speed;
+                dy = Math.random() * 1;
+            }
+
+            enemies.push({
+                x, y, dx, dy,
+                size,
+                health: Math.floor(size / 12) + 1,
+                rotation: 0,
+                rotSpeed: (Math.random() - 0.5) * 0.1,
+                type: Math.random() > 0.85 ? 'fast' : 'normal'
+            });
+        }
+
+        // Dibujar jugador
+        function drawPlayer() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+
+            if (player.invulnerable > 0 && Math.floor(player.invulnerable / 5) % 2 === 0) {
+                ctx.globalAlpha = 0.4;
+            }
+
+            // Motor
+            ctx.fillStyle = `rgba(0, 212, 255, ${0.3 + Math.random() * 0.3})`;
+            ctx.beginPath();
+            ctx.moveTo(-6, 18);
+            ctx.lineTo(0, 32 + Math.random() * 8);
+            ctx.lineTo(6, 18);
+            ctx.fill();
+
+            // Nave
+            ctx.fillStyle = '#00d4ff';
+            ctx.shadowColor = '#00d4ff';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.moveTo(0, -22);
+            ctx.lineTo(-13, 18);
+            ctx.lineTo(-7, 14);
+            ctx.lineTo(0, 22);
+            ctx.lineTo(7, 14);
+            ctx.lineTo(13, 18);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cabina
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 5;
+            ctx.beginPath();
+            ctx.arc(0, -4, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Alas
+            ctx.fillStyle = '#0088aa';
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.moveTo(-13, 4);
+            ctx.lineTo(-22, 18);
+            ctx.lineTo(-13, 13);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(13, 4);
+            ctx.lineTo(22, 18);
+            ctx.lineTo(13, 13);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawEnemy(enemy) {
+            ctx.save();
+            ctx.translate(enemy.x, enemy.y);
+            ctx.rotate(enemy.rotation);
+
+            if (enemy.type === 'fast') {
+                ctx.fillStyle = '#ff6b9d';
+                ctx.shadowColor = '#ff6b9d';
+            } else {
+                ctx.fillStyle = '#ff8844';
+                ctx.shadowColor = '#ff8844';
+            }
+            ctx.shadowBlur = 10;
+
+            // Meteorito irregular
+            ctx.beginPath();
+            const points = 7;
+            for (let i = 0; i < points; i++) {
+                const angle = (Math.PI * 2 / points) * i;
+                const r = enemy.size * (0.8 + Math.sin(frameCount * 0.1 + i) * 0.15);
+                const x = Math.cos(angle) * r;
+                const y = Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // Cráter
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.beginPath();
+            ctx.arc(enemy.size * 0.25, -enemy.size * 0.15, enemy.size * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawBullet(bullet) {
+            ctx.save();
+            ctx.fillStyle = '#00ff88';
+            ctx.shadowColor = '#00ff88';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(bullet.x, bullet.y, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(bullet.x, bullet.y + 8);
+            ctx.lineTo(bullet.x, bullet.y + 20);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawParticle(p) {
+            ctx.save();
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 4;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawStars() {
+            stars.forEach(star => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness * (0.5 + Math.sin(frameCount * 0.05 + star.x) * 0.5)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function checkCollision(a, b, radiusA, radiusB) {
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            return Math.sqrt(dx * dx + dy * dy) < radiusA + radiusB;
+        }
+
+        // Actualizar juego
+        function update() {
+            if (gameState !== 'playing') return;
+
+            frameCount++;
+
+            // Movimiento del jugador - Teclado + Táctil
+            player.dx = 0;
+            player.dy = 0;
+
+            // Teclado
+            if (keys['arrowleft'] || keys['a']) player.dx = -player.speed;
+            if (keys['arrowright'] || keys['d']) player.dx = player.speed;
+            if (keys['arrowup'] || keys['w']) player.dy = -player.speed;
+            if (keys['arrowdown'] || keys['s']) player.dy = player.speed;
+
+            // Táctil (joystick)
+            if (touchInput.active) {
+                player.dx = touchInput.x * player.speed;
+                player.dy = touchInput.y * player.speed;
+            }
+
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Limites
+            player.x = Math.max(18, Math.min(canvas.width - 18, player.x));
+            player.y = Math.max(18, Math.min(canvas.height - 18, player.y));
+
+            // Disparo - Teclado + Táctil
+            if (player.cooldown > 0) player.cooldown--;
+            const shooting = keys[' '] || keys['enter'] || fireActive;
+
+            if (shooting && player.cooldown <= 0) {
+                bullets.push({ x: player.x, y: player.y - 22, dy: -10 });
+                bullets.push({ x: player.x - 10, y: player.y - 8, dy: -10 });
+                bullets.push({ x: player.x + 10, y: player.y - 8, dy: -10 });
+                player.cooldown = 12;
+                playSound('shoot');
+            }
+
+            if (player.invulnerable > 0) player.invulnerable--;
+
+            // Balas
+            bullets = bullets.filter(b => {
+                b.y += b.dy;
+                return b.y > -10;
+            });
+
+            // Spawn enemigos
+            const spawnRate = Math.max(15, 55 - level * 4);
+            if (frameCount % spawnRate === 0) spawnEnemy();
+
+            // Enemigos
+            enemies = enemies.filter(enemy => {
+                enemy.x += enemy.dx;
+                enemy.y += enemy.dy;
+                enemy.rotation += enemy.rotSpeed;
+
+                // Colisión jugador
+                if (player.invulnerable <= 0 && checkCollision(player, enemy, 15, enemy.size)) {
+                    health -= 20;
+                    player.invulnerable = 60;
+                    createExplosion(enemy.x, enemy.y, '#ff4444', 18);
+                    playSound('hit');
+
+                    if (health <= 0) {
+                        gameOver();
+                    }
+                    return false;
+                }
+
+                // Colisión balas
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    if (checkCollision(bullets[i], enemy, 4, enemy.size)) {
+                        enemy.health--;
+                        createExplosion(bullets[i].x, bullets[i].y, '#00ff88', 4);
+                        bullets.splice(i, 1);
+
+                        if (enemy.health <= 0) {
+                            createExplosion(enemy.x, enemy.y, enemy.type === 'fast' ? '#ff6b9d' : '#ff8844', 22);
+                            playSound('explosion');
+                            score += enemy.type === 'fast' ? 30 : 10;
+
+                            if (score > 0 && score % 100 === 0) {
+                                level++;
+                                playSound('levelUp');
+                                showLevelUp();
+                            }
+                            return false;
+                        }
+                        break;
+                    }
+                }
+
+                return enemy.y < canvas.height + 50 && enemy.x > -50 && enemy.x < canvas.width + 50;
+            });
+
+            // Partículas
+            particles = particles.filter(p => {
+                p.x += p.dx;
+                p.y += p.dy;
+                p.life -= p.decay;
+                return p.life > 0;
+            });
+
+            // Estrellas
+            stars.forEach(star => {
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+
+            // HUD
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('levelDisplay').textContent = level;
+            document.getElementById('healthFill').style.width = Math.max(0, health) + '%';
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 46, 0.35)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawStars();
+
+            if (gameState === 'playing' || gameState === 'paused') {
+                bullets.forEach(drawBullet);
+                enemies.forEach(drawEnemy);
+                drawPlayer();
+            }
+
+            particles.forEach(drawParticle);
+        }
+
+        function showLevelUp() {
+            const el = document.getElementById('levelUpText');
+            el.textContent = `¡NIVEL ${level}!`;
+            el.classList.remove('show');
+            void el.offsetWidth;
+            el.classList.add('show');
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            level = 1;
+            health = 100;
+            bullets = [];
+            enemies = [];
+            particles = [];
+
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 100;
+            player.invulnerable = 0;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('pauseScreen').classList.add('hidden');
+            document.getElementById('hud').style.display = 'flex';
+            document.getElementById('healthBar').style.display = 'block';
+            document.getElementById('controlsHint').style.display = isTouchDevice ? 'none' : 'block';
+            document.getElementById('highScoreDisplay').textContent = highScore;
+            document.getElementById('touchControls').classList.toggle('active', isTouchDevice);
+            document.getElementById('pauseBtnTouch').classList.toggle('active', isTouchDevice);
+
+            initJoystick();
+            initStars();
+
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function togglePause() {
+            if (gameState === 'playing') {
+                gameState = 'paused';
+                document.getElementById('pauseScreen').classList.remove('hidden');
+                document.getElementById('touchControls').classList.remove('active');
+            } else if (gameState === 'paused') {
+                resumeGame();
+            }
+        }
+
+        function resumeGame() {
+            gameState = 'playing';
+            document.getElementById('pauseScreen').classList.add('hidden');
+            document.getElementById('touchControls').classList.toggle('active', isTouchDevice);
+        }
+
+        function goToMenu() {
+            gameState = 'menu';
+            document.getElementById('pauseScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('hud').style.display = 'none';
+            document.getElementById('healthBar').style.display = 'none';
+            document.getElementById('controlsHint').style.display = 'none';
+            document.getElementById('touchControls').classList.remove('active');
+            document.getElementById('pauseBtnTouch').classList.remove('active');
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            playSound('explosion');
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('cosmicHighScore', highScore);
+            }
+
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLevel').textContent = level;
+            document.getElementById('finalHighScore').textContent = highScore;
+
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('hud').style.display = 'none';
+            document.getElementById('healthBar').style.display = 'none';
+            document.getElementById('controlsHint').style.display = 'none';
+            document.getElementById('touchControls').classList.remove('active');
+            document.getElementById('pauseBtnTouch').classList.remove('active');
+        }
+
+        function goBack() {
+            window.location.href = '../Juegos.html';
+        }
+
+        // Prevenir scroll/zoom en móvil
+        document.addEventListener('touchmove', (e) => {
+            if (gameState === 'playing') e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        document.addEventListener('gesturechange', (e) => e.preventDefault());
+        document.addEventListener('gestureend', (e) => e.preventDefault());
+
+        // Iniciar
+        initStars();
+        gameLoop();
+
+        player.x = canvas.width / 2;
+        player.y = canvas.height - 100;
+    </script>
+
+</body>
+
+</html>

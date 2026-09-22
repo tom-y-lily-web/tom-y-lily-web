@@ -1,0 +1,47 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Siteboard</title>
+    <meta name="viewport" content="width=device-width" />
+    <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+
+            <script>
+                window.userTokens = {
+                    idToken: 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImRvbWluaW9ob3N0aW5ndXNvQGdtYWlsLmNvbSIsImVuY19kYXRhIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1qVTJSME5OSW4wLi43UDB0LVN0bXFsLS01RHVkLjVmYi1qWUxwZTREMkJfQXNOZ2R0RGNRd2RmaDhUdlJ1aERHSVRFWlRyN0ZvcW5zNUpPQW1vSHNicTlLSnAyNnZvdFBEUkpmejBnWTZfNU1Wdl80Lk9HeGRXZWR3RmpvNzM5akRvb3BXc3ciLCJleHAiOjE3NjE2MDA5MDIsImlzcyI6Imh0dHBzOi8vYXV0aC5uaWNlcGFnZS5jb20iLCJhdWQiOiJuaWNlcGFnZSIsImlhdCI6MTc2MDk5NjEwM30.5eguPgAr6S-Tr_tL9wLvx7wYCk3NcOTjNZiFjim5Wsc',
+                    refreshToken: 'eyJhbGciOiJIUzI1NiJ9.eyJlbmNfZGF0YSI6ImV5SmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNalUyUjBOTkluMC4udVFFYzQ2eE5PTkY3N2RVNC5nYk4zTXl4MmU5eHlaUUZsMXl2T0xmNnRTTTlDckVRYTJaY1JuWGtmbFFSRUxNOXdNSHFnUHhudng1QlV5Zy5tUTlFVlhlbUN4WXVtVEx3ZkE3Vmh3IiwiZXhwIjoxNzYxNjAwOTAyLCJpc3MiOiJodHRwczovL2F1dGgubmljZXBhZ2UuY29tIiwiYXVkIjoibmljZXBhZ2UiLCJpYXQiOjE3NjA5OTYxMDN9.2ugLVh80mZs6tfVjiFwyax9qEqmVZ_KGgEE6CRf9iUk'
+                };
+            </script>
+
+        <script id="loader-script" type="text/javascript"
+                src="//capp.nicepage.com/df3be9ee7e195e48b6f1974905b6b640f4ff28ed/loader.js?ver=7.14.7"
+                data-swurl="sw.js"
+                data-assets="//capp.nicepage.com/df3be9ee7e195e48b6f1974905b6b640f4ff28ed/"
+                data-processor="site">
+        </script>
+    <link rel="canonical" href="https://nicepage.com/editor/siteboard" />
+</head>
+<body>
+    <div id="loading-screen" style="display:flex;position:fixed;left:0px;top:0px;height:100%;width:100%;flex-flow:column;">
+        <style>
+            .horizontal-box{display:flex;flex-flow:row}
+            .spacer{flex:auto}
+            .centered-element{flex:none}
+            .message-block{margin:10px;font-family:"Open Sans";font-size:16px}
+            .button{background-color:#4c637f;border:none;color:white;padding:10px 30px;text-align:center;text-decoration:none;display:inline-block;margin-top:10px}
+            .hidden{display:none;}
+        </style>
+        <div class="spacer"></div>
+        <div class="horizontal-box">
+            <div class="spacer"></div>
+            <div class="centered-element message-block">
+                <span id="loadingApp" class="status-message"><strong>Loading...</strong></span>
+            </div>
+            <div class="spacer"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>
+

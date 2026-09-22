@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 407" role="img" aria-labelledby="title desc">
+  <title id="title">English games</title>
+  <desc id="desc">Colorful animated game scene with English learning words</desc>
+  <rect width="640" height="407" rx="28" fill="#101b4d"/>
+  <rect x="18" y="18" width="604" height="371" rx="22" fill="#172866" stroke="#64d9ff" stroke-width="4"/>
+  <circle cx="91" cy="78" r="36" fill="#ffd95a"/>
+  <circle cx="91" cy="78" r="25" fill="#fff2a6"/>
+  <g fill="#72edb0">
+    <rect x="44" y="150" width="10" height="10"/>
+    <rect x="570" y="76" width="12" height="12"/>
+    <rect x="542" y="310" width="9" height="9"/>
+    <rect x="76" y="326" width="12" height="12"/>
+  </g>
+  <g fill="#ff6eb4">
+    <path d="M159 60h12v12h-12zM153 66h24v5h-24z"/>
+    <path d="M520 135h12v12h-12zM514 141h24v5h-24z"/>
+  </g>
+  <g transform="translate(180 80)">
+    <rect x="0" y="0" width="280" height="182" rx="15" fill="#f9fbff" stroke="#0b143c" stroke-width="7"/>
+    <rect x="18" y="18" width="244" height="62" rx="9" fill="#ffdf63"/>
+    <text x="140" y="59" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#18245f">PLAY</text>
+    <g font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="middle">
+      <rect x="18" y="96" width="70" height="58" rx="9" fill="#ff7d70"/>
+      <text x="53" y="132" fill="#fff">A</text>
+      <rect x="105" y="96" width="70" height="58" rx="9" fill="#62d7ff"/>
+      <text x="140" y="132" fill="#18245f">B</text>
+      <rect x="192" y="96" width="70" height="58" rx="9" fill="#76e7a2"/>
+      <text x="227" y="132" fill="#18245f">C</text>
+    </g>
+  </g>
+  <g transform="translate(72 270)">
+    <path d="M36 57c4-24 15-37 31-37 10 0 16 7 21 15h36c5-8 11-15 21-15 16 0 27 13 31 37 3 19-7 28-18 22l-30-17H84L54 349c-11 6-21-3-18-22z" fill="#ff6eb4" stroke="#0b143c" stroke-width="6" transform="translate(0 -270)"/>
+    <circle cx="42" cy="43" r="8" fill="#172866"/>
+    <circle cx="58" cy="27" r="8" fill="#172866"/>
+    <path d="M114 31h18M123 22v18" stroke="#172866" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="155" cy="30" r="5" fill="#172866"/>
+    <circle cx="171" cy="42" r="5" fill="#172866"/>
+  </g>
+  <g transform="translate(486 282)">
+    <rect width="93" height="57" rx="10" fill="#64d9ff" stroke="#0b143c" stroke-width="5"/>
+    <text x="46" y="36" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#18245f">MATCH</text>
+  </g>
+  <text x="320" y="363" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="2" fill="#ffffff">LEARN • PLAY • WIN</text>
+  <g fill="#fff" opacity=".85">
+    <circle cx="125" cy="350" r="4"><animate attributeName="cy" values="350;338;350" dur="1.8s" repeatCount="indefinite"/></circle>
+    <circle cx="603" cy="184" r="5"><animate attributeName="cy" values="184;171;184" dur="2.2s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(470 48)">
+    <path d="M0 0l8 18 20 2-15 13 4 20-17-10-17 10 4-20-15-13 20-2z" fill="#ffdf63">
+      <animateTransform attributeName="transform" type="rotate" values="0 0 0;15 0 0;0 0 0" dur="2s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

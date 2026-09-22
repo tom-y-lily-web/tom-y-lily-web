@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lim version="5.6.4">
+    <config>
+        <idioma>0</idioma>
+        <licencia></licencia>
+        <corfondo>FFFFFF</corfondo>
+        <corbanda>00FFFF</corbanda>
+        <cornavega>00FFFF</cornavega>
+        <cormensaxes>000000</cormensaxes>
+        <cortexto>000000</cortexto>
+        <titulo>Diviertete con Tom y Lily</titulo>
+        <subtitulo>2025</subtitulo>
+        <autor>Proyecyo de Grado</autor>
+        <informe>1</informe>
+        <botonson>1</botonson>
+        <maximizar>1</maximizar>
+        <desordenar>0</desordenar>
+        <correcto son="" modo="1" >Muy bien</correcto>
+        <incorrecto son="" modo="1" >Intentalo nuevamente</incorrecto>
+    </config>
+    <libro>
+        <paxina id="1" >
+              <tipo>38</tipo>
+              <imaxe>logocelco.png</imaxe>
+              <forma>0</forma>
+              <texto><![CDATA[
+<p align="left">
+<font color="#004080" face="Arial" size="54">JUEGA Y APRENDE CON TOM Y LILY<br>
+2025</font></p>
+]]></texto>
+              <ctexto>000000</ctexto>
+        </paxina>
+        <paxina id="2" >
+              <tipo>3</tipo>
+              <cabeceira>Arrastra las piezas para completar el rompecabezas</cabeceira>
+              <pe>Mucha suerte</pe>
+              <imaxe>logocelco.png</imaxe>
+              <imfondo  trans="20">logocelco.png</imfondo>
+              <filas>3</filas>
+              <columnas>3</columnas>
+              <reixa>0</reixa>
+            <forma>0</forma>
+        </paxina>
+        <paxina id="3" >
+              <tipo>11</tipo>
+              <cabeceira>Arrastra la palabra correspondiente segun la imagen correcta</cabeceira>
+              <modo>3</modo>
+              <cousa nome="Banana">BANANO.png</cousa>
+              <cousa nome="Water">AGUA.png</cousa>
+              <cousa nome="Hamburguer">HAMBURGUESA.png</cousa>
+              <cousa nome="Grandmother">abuelaa.jpg</cousa>
+              <cousa nome="Jacket">CHAQUETA.png</cousa>
+        </paxina>
+        <paxina id="4" >
+              <tipo>11</tipo>
+              <cabeceira>Escribe la palabra en ingles segun la imagen correspondiente</cabeceira>
+              <modo>1</modo>
+              <cousa nome="Apple">APPLE.png</cousa>
+              <cousa nome="Pizza">PIZZAAA.png</cousa>
+              <cousa nome="Pants">PANTALON.png</cousa>
+              <cousa nome="Limonade">LIMONADA.png</cousa>
+              <cousa nome="Milk">LECHE.png</cousa>
+        </paxina>
+        <paxina id="5" >
+              <tipo>19</tipo>
+              <cabeceira>Adivina la palabra secreta, importante: Escribela en ingles</cabeceira>
+              <imaxe>ZAPATOS.png</imaxe>
+              <texto><![CDATA[Los utilizamos en nuestro uso diario, para camionar en superficies]]></texto>
+              <resp texto="">Shoes</resp>
+              <modo>0</modo>
+              <forma>0</forma>
+        </paxina>
+        <paxina id="6" >
+              <tipo>4</tipo>
+              <cabeceira>Arrastra desde la primera palabra a la ultima para realizar esta sopa de letras</cabeceira>
+              <modo>2</modo>
+              <sopa enun="FALDA.png">skirt</sopa>
+              <sopa enun="CHAQUETA.png">jacket</sopa>
+              <sopa enun="LECHE.png">milk</sopa>
+              <sopa enun="PANTALON.png">pants</sopa>
+              <sopa enun="JUGO.png">juice</sopa>
+              <sopa enun="papa.jpg">father</sopa>
+              <sopa enun="NARANJA.png">orange</sopa>
+              <sopa enun="mama.jpg">mother</sopa>
+              <enunciado>1</enunciado>
+              <colorea>1</colorea>
+              <cadro>0</cadro>
+        </paxina>
+        <paxina id="7" >
+              <tipo>17</tipo>
+              <cabeceira>Encuentra las parejas antes de uqe termine el tiempo</cabeceira>
+              <parellas>CHOCOLATE.png</parellas>
+              <parellas>APPLE.png</parellas>
+              <parellas>abuelooo.jpg</parellas>
+              <parellas>BANANO.png</parellas>
+              <parellas>PANTALON.png</parellas>
+              <parellas>PIZZAAA.png</parellas>
+              <cfondo>FFFFFF</cfondo>
+              <ctapa>000000</ctapa>
+              <tempo>20</tempo>
+        </paxina>
+        <paxina id="8" >
+              <tipo>24</tipo>
+              <cabeceira>Elige el spaguetti</cabeceira>
+              <etiqueta imaxe="BANANO.png" texto="">0</etiqueta>
+              <etiqueta imaxe="abuelooo.jpg" texto="">0</etiqueta>
+              <etiqueta imaxe="SANIDA.png" texto="">0</etiqueta>
+              <etiqueta imaxe="mama.jpg" texto="">0</etiqueta>
+              <etiqueta imaxe="PASTA.png" texto="">1</etiqueta>
+              <etiqueta imaxe="PIJAMA.png" texto="">0</etiqueta>
+              <cfondo>83FE8C</cfondo>
+        </paxina>
+    </libro>
+</lim>

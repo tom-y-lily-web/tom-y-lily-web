@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz-Aprende con Tom y Lily</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+   <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #004d7a;
+            margin-bottom: 30px;
+            font-size: 3em;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s;
+        }
+        .question {
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: slideIn 0.5s;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .question:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+        label {
+            display: block;
+            margin: 15px 0;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+        input[type="radio"] {
+            display: none;
+        }
+        input[type="radio"] + label:hover {
+            background: #e0e0e0;
+        }
+        input[type="radio"]:checked + label {
+            background: #007BFF;
+            color: white;
+        }
+        button {
+            padding: 12px 25px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px)
+        }
+        .correct-button {
+            background-color: #28a745
+        }
+        .incorrect-button {
+            background-color: #2b62c7
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            width: 90%;
+            max-width: 600px;
+            animation: fadeIn 0.5s forwards;
+        }
+        .hidden { display: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>QUIZ MY FAMILY</h1>
+
+
+<button id="nextButton" onclick="nextQuestion()">Siguiente</button>
+<div id="result" class="result hidden"></div>
+</a>
+<p>
+<div id="quiz"></div>
+<button type="button" onclick="location.href='My-family.html';" style="padding: 10px 20px; font-size: 16px; background-color: #b92626; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Volver a Tom y Lily
+</button>
+
+
+</div>
+<script>
+    const questions = [
+        {
+            question: "Who is your mother's brother? / ¿Quién es el hermano de tu mamá?",
+            answers: [" A) Uncle", "B) Cousin", "C) Father."],
+            correct: "A) Uncle",
+            explanation: "El hermano de tu mamá es tu tío."
+        },
+        {
+            question: "Who is your father's sister? / ¿Quién es la hermana de tu papá.",
+            answers: ["A) Aunt", "B) Mother.", "C) Sister."],
+            correct: "A) Aunt",
+            explanation: "La hermana de tu papá es tu tía."
+        },
+        {
+            question: "Who is the son of your parents? / ¿Quién es el hijo de tus padres?",
+            answers: ["A) Brother", "B) Cousin", "C) Father."],
+            correct: "A) Brother",
+            explanation: "El hijo de tus padres es tu hermano."
+        },
+        {
+            question: "Who is your father's father? / ¿Quién es el papá de tu papá?",
+            answers: ["A) Grandfather", "B) Uncle", "C) Father."],
+            correct: "Lo intento, aunque sienta nervios.",
+            explanation: "Intentarlo con miedo es un acto de valentía. Cada paso que das, aunque sea pequeño, te hace crecer."
+        },
+        {
+            question: "Who is your mother's mother? / ¿Quién es la mamá de tu mamá?",
+            answers: ["A) Grandmother", "B) Aunt", "C) Sister."],
+            correct: "A) Grandmother",
+            explanation: "La mamá de tu mamá es tu abuela."
+        },
+        {
+            question: "Who is the daughter of your parents? / ¿Quién es la hija de tus padres?",
+            answers: ["A) Sister", "B) Cousin", "C) Mother"],
+            correct: "A) Sister",
+            explanation: "La hija de tus padres es tu hermana."
+        },
+        {
+            question: "Who is your uncle's child? / ¿Quién es el hijo de tu tío?",
+            answers: ["A) Cousin", "B) Brother", "C) Nephew"],
+            correct: "A) Cousin",
+            explanation: "El hijo de tu tío es tu primo."
+        },
+        {
+            question: "Pregunta: Who is your aunt's son? / ¿Quién es el hijo de tu tía?",
+            answers: ["A) Cousin", "B) Brother","C) Nephew"],
+            correct: "A) Cousin",
+            explanation: "El hijo de tu tía también es tu primo."
+        },
+        {
+            question: "Who is your sister's son? / ¿Quién es el hijo de tu hermana?",
+            answers: ["A) Cousin", "B) Brother ", "C) Nephew"],
+            correct: "C) Nephew",
+            explanation: "El hijo de tu hermana es tu sobrino."
+        },
+        {
+            question: "Who is your brother's daughter? / ¿Quién es la hija de tu hermano?",
+            answers: ["A) Cousin", "B) Daughter", "C) Niece"],
+            correct: "C) Niece",
+            explanation: "La hija de tu hermano es tu sobrina."
+        },
+        {
+            question: "Who is your parent's child? / ¿Quién es el hijo de tus padres?",
+            answers: [" A) Cousin", "B) Aunt", "C) You or your brother/sister"],
+            correct: "C) You or your brother/sister",
+            explanation: "El hijo de tus padres eres tú o tu hermano/hermana."
+        },
+        {
+            question: "Who is married to your mother or father? / ¿Quién está casado con tu mamá o papá?",
+            answers: ["A) Uncle", "B) Brother", "C) Father"],
+            correct: "C) Father",
+            explanation: "La persona casada con tu mamá o papá es tu mamá o tu papá."
+        }
+    ];
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    let currentQuestion = 0;
+    let score = 0;
+    const totalQuestions = 5; 
+    const selectedQuestions = shuffle(questions).slice(0, totalQuestions);
+
+    function loadQuestion() {
+        const quizDiv = document.getElementById('quiz');
+        const question = selectedQuestions[currentQuestion];
+
+        if (question) {
+            quizDiv.innerHTML = `
+                <div class="question animated">
+                    <p>${currentQuestion + 1}. ${question.question}</p>
+                    ${question.answers.map((answer) => `
+                        <input type="radio" id="q${currentQuestion}-${answer}" name="q${currentQuestion}" value="${answer}">
+                        <label for="q${currentQuestion}-${answer}">${answer}</label>
+                    `).join('')}
+                </div>
+            `;
+            quizDiv.firstChild.classList.add('animated');
+            quizDiv.firstChild.style.animation = "slideIn 0.5s";
+        } else {
+            showResult();
+        }
+    }
+
+    function nextQuestion() {
+        const question = selectedQuestions[currentQuestion];
+        const selectedAnswer = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+        const nextButton = document.getElementById('nextButton');
+
+        if (selectedAnswer) {
+          
+            nextButton.classList.remove('correct-button', 'incorrect-button');
+
+           
+            if (selectedAnswer.value === question.correct) {
+                score++;
+                nextButton.classList.add('correct-button')
+            } else {
+                nextButton.classList.add('incorrect-button')
+            }
+
+            currentQuestion++;
+            setTimeout(() => {
+                loadQuestion();
+                
+                nextButton.classList.remove('correct-button', 'incorrect-button');
+            }, 1000)
+        } else {
+            alert("Por favor, selecciona una respuesta.");
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz').classList.add('hidden');
+        document.getElementById('nextButton').classList.add('hidden');
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `Has acertado ${score} de ${totalQuestions} preguntas.<br><br>`;
+        selectedQuestions.forEach((question) => {
+            resultDiv.innerHTML += `<strong>${question.question}</strong><br>
+                                    Respuesta correcta: ${question.correct}<br>
+                                    Justificación: ${question.explanation}<br><br>`;
+        });
+        resultDiv.classList.remove('hidden');
+        resultDiv.style.opacity = 1; 
+        resultDiv.style.transition = "opacity 0.5s ease-in-out";
+        resultDiv.style.animation = "fadeIn 0.5s forwards";
+    }
+
+    loadQuestion();
+    
+</script>
+
+</body>
+</html>
